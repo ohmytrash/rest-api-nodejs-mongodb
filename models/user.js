@@ -38,18 +38,15 @@ userSchema.statics.isUsernameTaken = async function (username, excludeUserId) {
   return !!user
 }
 
-userSchema.methods.isPasswordMatch = async function (password) {
-  const user = this
-  return bcrypt.compare(password, user.password)
+userSchema.statics.hashPassword = async function (password) {
+  return await bcrypt.hash(password, 8)
 }
 
-userSchema.pre('save', async function (next) {
+userSchema.methods.isPasswordMatch = async function (password) {
   const user = this
-  if (user.isModified('password')) {
-    user.password = await bcrypt.hash(user.password, 8)
-  }
-  next()
-})
+  console.log(password, user.password)
+  return bcrypt.compare(password, user.password)
+}
 
 const User = mongoose.model('User', userSchema)
 

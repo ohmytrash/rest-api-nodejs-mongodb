@@ -9,7 +9,7 @@ const register = async (req, res, next) => {
     if(await User.isUsernameTaken(username)) {
       return next(new ApiError(httpStatus.BAD_REQUEST, 'Username already exists.'))
     }
-    const user = await User.create({ username, name, password })
+    const user = await User.create({ username, name, password: await User.hashPassword(password) })
     res.json({user, token: generateToken(user.id)})
   } catch (e) {
     next(e)
@@ -33,8 +33,30 @@ const profile = async (req, res, next) => {
   res.json({ user: req.user })
 }
 
+const updateProfile = async (req, res, next) => {
+  const { name, username, new_password, password } = req.body
+  const data = { name, username }
+  try {
+    if(await User.isUsernameTaken(username, req.user.id)) {
+      return next(new ApiError(httpStatus.BAD_REQUEST, 'Username already exists.'))
+    }
+    if(new_password) {
+      if(await req.user.isPasswordMatch(password)) {
+        data.password = await User.hashPassword(new_password)
+      } else {
+        return next(new ApiError(httpStatus.BAD_REQUEST, 'Password is invalid.'))
+      }
+    }
+    await User.findByIdAndUpdate(req.user.id, data)
+    res.json({ user: await User.findById(req.user.id) })
+  } catch (e) {
+    next(e)
+  }
+}
+
 module.exports = {
   register,
   login,
-  profile
+  profile,
+  updateProfile
 }

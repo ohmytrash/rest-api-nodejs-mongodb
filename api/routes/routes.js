@@ -5,6 +5,7 @@ const auth = require('../middlewares/auth')
 
 Router.post('/register', ...authValidation.register, authController.register)
 Router.post('/login', ...authValidation.login, authController.login)
+Router.put('/profile', auth, ...authValidation.updateProfile, authController.updateProfile)
 Router.get('/profile', auth, authController.profile)
 
 module.exports = Router

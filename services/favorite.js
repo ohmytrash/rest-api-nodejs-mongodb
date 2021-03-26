@@ -20,9 +20,14 @@ const toggle = async (user, post) => {
   return await add(user, post)
 }
 
+const fetch = async user => {
+  return Favorite.find({ user })
+}
+
 module.exports = {
   add,
   remove,
   isFavorited,
-  toggle
+  toggle,
+  fetch
 }

@@ -38,8 +38,17 @@ const exists = async (_id, user) => {
   }
 }
 
+const read = async _id => {
+  try {
+    return await Post.findOne({_id}).populate(['category', 'user'])
+  } catch (e) {
+    return false
+  }
+}
+
 module.exports = {
   create,
   update,
-  exists
+  exists,
+  read
 }

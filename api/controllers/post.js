@@ -12,7 +12,7 @@ const create = async (req, res, next) => {
   }
   try {
     const post = await postService.create(data)
-    res.json(post)
+    res.json(await postService.read(post.id))
   } catch (e) {
     next(e)
   }
@@ -32,14 +32,24 @@ const update = async (req, res, next) => {
   }
 
   try {
-    const post = await postService.update(data, id)
-    res.json(post)
+    await postService.update(data, id)
+    res.json(await postService.read(id))
   } catch (e) {
     next(e)
   }
 }
 
+const read = async (req, res, next) => {
+  const id = req.params.id
+  const post = await postService.read(id)
+  if(post) {
+    return res.json(post)
+  }
+  return next(new ApiError(httpStatus.NOT_FOUND, 'Post not found'))
+}
+
 module.exports = {
   create,
-  update
+  update,
+  read
 }

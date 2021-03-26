@@ -4,6 +4,8 @@ const authValidation = require('../validators/auth')
 const authController = require('../controllers/auth')
 const postValidation = require('../validators/post')
 const postController = require('../controllers/post')
+const commentValidation = require('../validators/comment')
+const commentController = require('../controllers/comment')
 
 Router.post('/register', ...authValidation.register, authController.register)
 Router.post('/login', ...authValidation.login, authController.login)
@@ -16,5 +18,9 @@ Router.get('/post/:id', postController.read)
 Router.get('/post', postController.fetch)
 Router.delete('/post/:id', auth, postController.destroy)
 Router.post('/post/:id/favorite-toggle', auth, postController.favoriteToggle)
+
+Router.get('/comment/:postid', commentController.fetch)
+Router.post('/comment/:postid', auth, ...commentValidation.create, commentController.create)
+Router.delete('/comment/:commentid', auth, commentController.destroy)
 
 module.exports = Router

@@ -34,7 +34,7 @@ const postSchema = new Schema(
     body: {
       type: String,
       required: true,
-      maxlength: 2000
+      maxlength: 1500
     },
   },
   {

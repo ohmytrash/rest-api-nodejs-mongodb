@@ -24,6 +24,7 @@
     "morgan": "^1.10.0",
     "normalize-port": "^1.0.0",
     "parse-bearer-token": "^1.0.1",
+    "slug": "^4.0.3",
     "validator": "^13.5.2",
     "winston": "^3.3.3",
     "xss-clean": "^0.1.1"

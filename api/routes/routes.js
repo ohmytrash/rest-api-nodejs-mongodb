@@ -11,5 +11,6 @@ Router.put('/profile', auth, ...authValidation.updateProfile, authController.upd
 Router.get('/profile', auth, authController.profile)
 
 Router.post('/post', auth, ...postValidation.create, postController.create)
+Router.put('/post/:id', auth, ...postValidation.create, postController.update)
 
 module.exports = Router

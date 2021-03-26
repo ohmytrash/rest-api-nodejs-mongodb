@@ -42,6 +42,9 @@ const create = [
   }
 ]
 
+const update = create
+
 module.exports = {
-  create
+  create,
+  update
 }

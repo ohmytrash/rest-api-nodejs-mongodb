@@ -18,6 +18,28 @@ const create = async (req, res, next) => {
   }
 }
 
+const update = async (req, res, next) => {
+  const id = req.params.id
+  const data = {
+    title: req.body.title,
+    description: req.body.description,
+    body: req.body.body,
+    category: req.body.category,
+  }
+
+  if(!(await postService.exists(id, req.user.id))) {
+    return next(new ApiError(httpStatus.NOT_FOUND, 'Post not found'))
+  }
+
+  try {
+    const post = await postService.update(data, id)
+    res.json(post)
+  } catch (e) {
+    next(e)
+  }
+}
+
 module.exports = {
-  create
+  create,
+  update
 }

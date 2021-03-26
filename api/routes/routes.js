@@ -13,5 +13,7 @@ Router.get('/profile', auth, authController.profile)
 Router.post('/post', auth, ...postValidation.create, postController.create)
 Router.put('/post/:id', auth, ...postValidation.create, postController.update)
 Router.get('/post/:id', postController.read)
+Router.get('/post', postController.fetch)
+Router.delete('/post/:id', auth, postController.destroy)
 
 module.exports = Router

@@ -40,15 +40,33 @@ const exists = async (_id, user) => {
 
 const read = async _id => {
   try {
-    return await Post.findOne({_id}).populate(['category', 'user'])
+    return await Post.findOne({_id})
+      .populate('category')
+      .populate('user', 'name username')
   } catch (e) {
     return false
   }
+}
+
+const fetch = async () => {
+  try {
+    return await Post.find()
+      .populate('category')
+      .populate('user', 'name username')
+  } catch (e) {
+    return false
+  }
+}
+
+const destroy = async id => {
+  return await Post.findByIdAndDelete(id)
 }
 
 module.exports = {
   create,
   update,
   exists,
-  read
+  read,
+  fetch,
+  destroy
 }

@@ -48,8 +48,32 @@ const read = async (req, res, next) => {
   return next(new ApiError(httpStatus.NOT_FOUND, 'Post not found'))
 }
 
+const fetch = async (req, res, next) => {
+  try {
+    const posts = await postService.fetch()
+    return res.json(posts)
+  } catch (e) {
+    next(e)
+  }
+}
+
+const destroy = async (req, res, next) => {
+  const id = req.params.id
+  if(!(await postService.exists(id, req.user.id))) {
+    return next(new ApiError(httpStatus.NOT_FOUND, 'Post not found'))
+  }
+  try {
+    await postService.destroy(id)
+    res.end()
+  } catch (e) {
+    next(e)
+  }
+}
+
 module.exports = {
   create,
   update,
-  read
+  read,
+  fetch,
+  destroy
 }

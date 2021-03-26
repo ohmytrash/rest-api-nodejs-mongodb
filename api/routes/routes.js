@@ -15,5 +15,6 @@ Router.put('/post/:id', auth, ...postValidation.create, postController.update)
 Router.get('/post/:id', postController.read)
 Router.get('/post', postController.fetch)
 Router.delete('/post/:id', auth, postController.destroy)
+Router.post('/post/:id/favorite-toggle', auth, postController.favoriteToggle)
 
 module.exports = Router

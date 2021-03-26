@@ -1,6 +1,7 @@
 const httpStatus = require("http-status")
 const ApiError = require("../../helpers/ApiError")
 const postService = require('../../services/post')
+const favoriteService = require('../../services/favorite')
 
 const create = async (req, res, next) => {
   const data = {
@@ -70,10 +71,25 @@ const destroy = async (req, res, next) => {
   }
 }
 
+const favoriteToggle = async (req, res, next) => {
+  const id = req.params.id
+  const post = await postService.exists(id)
+  if(!post) {
+    return next(new ApiError(httpStatus.NOT_FOUND, 'Post not found'))
+  }
+
+  try {
+    res.json(await favoriteService.toggle(req.user.id, id))
+  } catch (e) {
+    next(e)
+  }
+}
+
 module.exports = {
   create,
   update,
   read,
   fetch,
-  destroy
+  destroy,
+  favoriteToggle
 }

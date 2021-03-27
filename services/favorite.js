@@ -21,7 +21,7 @@ const toggle = async (user, post) => {
 }
 
 const fetch = async user => {
-  return Favorite.find({ user })
+  return Favorite.find({ user }).sort('-createdAt')
 }
 
 module.exports = {

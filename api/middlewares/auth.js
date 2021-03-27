@@ -6,8 +6,8 @@ const User = require('../../models/user')
 
 const auth = async (req, res, next) => {
   try {
-    const token = parseBearerToken(req)
-    const payload = verifyToken(token)
+    req.token = parseBearerToken(req)
+    const payload = verifyToken(req.token)
     req.user = await User.findById(payload.sub)
     if(req.user) return next() 
   } catch (e) {

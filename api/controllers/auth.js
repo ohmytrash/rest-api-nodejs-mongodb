@@ -30,7 +30,7 @@ const login = async (req, res, next) => {
 }
 
 const profile = async (req, res, next) => {
-  res.json({ user: req.user })
+  res.json({ user: req.user, token: req.token })
 }
 
 const updateProfile = async (req, res, next) => {

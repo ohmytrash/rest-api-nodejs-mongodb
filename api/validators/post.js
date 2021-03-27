@@ -19,10 +19,9 @@ const create = [
       }
     },
     body: {
-      trim: true,
       isLength: {
-        errorMessage: 'Body is required',
-        options: { min: 1 },
+        errorMessage: 'Body min 20 and max 2500 characters',
+        options: { min: 20, max: 2500 },
       }
     },
     category: {

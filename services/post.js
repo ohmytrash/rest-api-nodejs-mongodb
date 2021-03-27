@@ -24,7 +24,8 @@ const create = async data => {
 const update = async (data, id) => {
   data.slug = await generateSlug(data.title, id)
   data.category = (await categoryService.firstOrCreate(data.category)).id
-  return await Post.findByIdAndUpdate(id, data)
+  await Post.findByIdAndUpdate(id, data)
+  return read(id)
 }
 
 const exists = async (_id, user) => {
@@ -53,6 +54,7 @@ const fetch = async () => {
     return await Post.find()
       .populate('category')
       .populate('user', 'name username')
+      .sort('-createdAt')
   } catch (e) {
     return false
   }

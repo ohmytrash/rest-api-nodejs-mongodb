@@ -16,8 +16,7 @@ const postSchema = new Schema(
     title: {
       type: String,
       required: true,
-      trim: true,
-      maxlength: 100
+      trim: true
     },
     slug: {
       type: String,
@@ -28,13 +27,11 @@ const postSchema = new Schema(
     description: {
       type: String,
       required: true,
-      trim: true,
-      maxlength: 300
+      trim: true
     },
     body: {
       type: String,
-      required: true,
-      maxlength: 1500
+      required: true
     },
   },
   {

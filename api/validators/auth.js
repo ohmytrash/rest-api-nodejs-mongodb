@@ -1,18 +1,17 @@
-const { checkSchema , validationResult} = require('express-validator');
-const httpStatus = require('http-status');
-const ApiError = require('../../helpers/ApiError');
+const { checkSchema , validationResult} = require('express-validator')
+const httpStatus = require('http-status')
+const FileType = require('file-type');
+const ApiError = require('../../helpers/ApiError')
+const catchAsync = require('../../helpers/catchAsync')
+const userService = require('../../services/user')
 
 const register = [
   checkSchema({
     name: {
       trim: true,
       isLength: {
-        errorMessage: 'Name min 3 characters',
-        options: { min: 3 },
-      },
-      custom: {
-        errorMessage: 'Invalid name format',
-        options: val => val.match(/^(?!.*[ ]{2})[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/),
+        errorMessage: 'Name min 3 and max 20 characters',
+        options: { min: 3, max: 20 },
       }
     },
     username: {
@@ -34,13 +33,16 @@ const register = [
       }
     },
   }),
-  (req, res, next) => {
-    const errors = validationResult(req);
+  catchAsync(async (req, res, next) => {
+    const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return next(new ApiError(httpStatus.BAD_REQUEST, errors.array()[0].msg))
     }
-    next();
-  }
+    if(await userService.isUsernameTaken(req.body.username)) {
+      next(new ApiError(httpStatus.BAD_REQUEST, 'Username already exists.'))
+    }
+    next()
+  })
 ]
 
 const login = [
@@ -61,11 +63,11 @@ const login = [
     },
   }),
   (req, res, next) => {
-    const errors = validationResult(req);
+    const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return next(new ApiError(httpStatus.BAD_REQUEST, errors.array()[0].msg))
     }
-    next();
+    next()
   }
 ]
 
@@ -74,13 +76,15 @@ const updateProfile = [
     name: {
       trim: true,
       isLength: {
-        errorMessage: 'Name min 3 characters',
-        options: { min: 3 },
+        errorMessage: 'Name min 3 and max 20 characters',
+        options: { min: 3, max: 20 },
       },
-      custom: {
-        errorMessage: 'Invalid name format',
-        options: val => val.match(/^(?!.*[ ]{2})[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/),
-      }
+    },
+    bio: {
+      isLength: {
+        errorMessage: 'Bio max 250 characters',
+        options: { max: 250 },
+      },
     },
     username: {
       trim: true,
@@ -117,17 +121,34 @@ const updateProfile = [
       }
     }
   }),
-  (req, res, next) => {
-    const errors = validationResult(req);
+  catchAsync(async(req, res, next) => {
+    const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return next(new ApiError(httpStatus.BAD_REQUEST, errors.array()[0].msg))
     }
-    next();
-  }
+    if(await userService.isUsernameTaken(req.body.username, req.user.id)) {
+      return next(new ApiError(httpStatus.BAD_REQUEST, 'Username already exists.'))
+    }
+    if(req.body.new_password && !(await userService.checkPassword(req.user.password, req.body.password))) {
+      return next(new ApiError(httpStatus.BAD_REQUEST, 'Password is invalid.'))
+    }
+    next()
+  })
 ]
+
+const updateAvatar = catchAsync(async (req, res, next) => {
+  const image = req.files.image || {}
+  if(!image.data) return next(new ApiError(httpStatus.BAD_REQUEST, 'Image is required'))
+  const mime = await FileType.fromBuffer(image.data)
+  if(!['jpg', 'png', 'gif'].includes(mime.ext)) {
+    return next(new ApiError(httpStatus.BAD_REQUEST, 'Image format must be [jpg, png, gif]'))
+  }
+  next()
+})
 
 module.exports = {
   register,
   login,
-  updateProfile
+  updateProfile,
+  updateAvatar
 }

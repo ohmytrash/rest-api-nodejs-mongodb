@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const bcrypt = require('bcryptjs')
 const toJSON = require('./plugins/toJSON')
 
 const { Schema } = mongoose
@@ -10,6 +9,15 @@ const userSchema = new Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    bio: {
+      type: String,
+      default: '',
+      maxlength: 250
+    },
+    avatar: {
+      type: String,
+      default: ''
     },
     username: {
       type: String,
@@ -25,6 +33,14 @@ const userSchema = new Schema(
       minlength: 8,
       private: true,
     },
+    token: {
+      type: String,
+      private: true
+    },
+    tokenExpiredAt: {
+      type: Date,
+      private: true
+    },
   },
   {
     timestamps: true,
@@ -32,21 +48,6 @@ const userSchema = new Schema(
 )
 
 userSchema.plugin(toJSON)
-
-userSchema.statics.isUsernameTaken = async function (username, excludeUserId) {
-  const user = await this.findOne({ username, _id: { $ne: excludeUserId } })
-  return !!user
-}
-
-userSchema.statics.hashPassword = async function (password) {
-  return await bcrypt.hash(password, 8)
-}
-
-userSchema.methods.isPasswordMatch = async function (password) {
-  const user = this
-  console.log(password, user.password)
-  return bcrypt.compare(password, user.password)
-}
 
 const User = mongoose.model('User', userSchema)
 

@@ -11,6 +11,7 @@ const userController = require('../controllers/user')
 Router.post('/register', ...authValidation.register, authController.register)
 Router.post('/login', ...authValidation.login, authController.login)
 Router.put('/profile', auth, ...authValidation.updateProfile, authController.updateProfile)
+Router.put('/profile/avatar', auth, authValidation.updateAvatar, authController.updateAvatar)
 Router.get('/profile', auth, authController.profile)
 
 Router.post('/post', auth, ...postValidation.create, postController.create)

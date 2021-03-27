@@ -1,62 +1,47 @@
 const httpStatus = require("http-status")
 const ApiError = require("../../helpers/ApiError")
+const catchAsync = require("../../helpers/catchAsync")
+const userService = require('../../services/user')
 const User = require("../../models/user")
-const { generateToken } = require('../../helpers/token')
 
-const register = async (req, res, next) => {
-  try {
-    const { username, name, password } = req.body
-    if(await User.isUsernameTaken(username)) {
-      return next(new ApiError(httpStatus.BAD_REQUEST, 'Username already exists.'))
-    }
-    const user = await User.create({ username, name, password: await User.hashPassword(password) })
-    res.json({user, token: generateToken(user.id)})
-  } catch (e) {
-    next(e)
+const register = catchAsync(async (req, res, next) => {
+  const { name, username, password } = req.body
+  const user = await userService.createUser({ name, username, password })
+  const token = await userService.createToken(user.id)
+  res.json({ user, token })
+})
+
+const login = catchAsync(async (req, res, next) => {
+  const { username, password } = req.body
+  const user = await userService.getUserByUsername(username)
+  if(user && await userService.checkPassword(user.password, password)) {
+    const token = await userService.createToken(user.id)
+    return res.json({ user, token })
   }
-}
+  next(new ApiError(httpStatus.BAD_REQUEST, 'Password and Username combination is invalid.'))
+})
 
-const login = async (req, res, next) => {
-  try {
-    const { username, password } = req.body
-    const user = await User.findOne({ username })
-    if(user && await user.isPasswordMatch(password)) {
-      return res.json({user, token: generateToken(user.id)})
-    }
-    next(new ApiError(httpStatus.BAD_REQUEST, 'Password and Username combination is invalid.'))
-  } catch (e) {
-    next(e)
-  }
-}
-
-const profile = async (req, res, next) => {
+const profile = (req, res, next) => {
   res.json({ user: req.user, token: req.token })
 }
 
-const updateProfile = async (req, res, next) => {
-  const { name, username, new_password, password } = req.body
-  const data = { name, username }
-  try {
-    if(await User.isUsernameTaken(username, req.user.id)) {
-      return next(new ApiError(httpStatus.BAD_REQUEST, 'Username already exists.'))
-    }
-    if(new_password) {
-      if(await req.user.isPasswordMatch(password)) {
-        data.password = await User.hashPassword(new_password)
-      } else {
-        return next(new ApiError(httpStatus.BAD_REQUEST, 'Password is invalid.'))
-      }
-    }
-    await User.findByIdAndUpdate(req.user.id, data)
-    res.json({ user: await User.findById(req.user.id) })
-  } catch (e) {
-    next(e)
-  }
-}
+const updateProfile = catchAsync(async (req, res, next) => {
+  const { name, bio, username, new_password } = req.body
+  const data = { name, bio, username }
+  if(new_password) data.password = new_password
+  const user = await userService.updateUser(req.user.id, data);
+  res.json({ user })
+})
+
+const updateAvatar = catchAsync(async (req, res, next) => {
+  const user = await userService.updateAvatar(req.user.id, req.files.image.data, req.user.avatar)
+  res.json({ user })
+})
 
 module.exports = {
   register,
   login,
   profile,
-  updateProfile
+  updateProfile,
+  updateAvatar
 }

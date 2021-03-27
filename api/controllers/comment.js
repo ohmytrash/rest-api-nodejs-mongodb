@@ -2,8 +2,9 @@ const httpStatus = require("http-status")
 const ApiError = require("../../helpers/ApiError")
 const postService = require('../../services/post')
 const commentService = require('../../services/comment')
+const catchAsync = require("../../helpers/catchAsync")
 
-const create = async (req, res, next) => {
+const create = catchAsync(async (req, res, next) => {
   const id = req.params.postid
   if(!(await postService.exists(id))) {
     return next(new ApiError(httpStatus.NOT_FOUND, 'Post not found'))
@@ -13,34 +14,22 @@ const create = async (req, res, next) => {
     post: id,
     body: req.body.body,
   }
-  try {
-    res.json(await commentService.create(data))
-  } catch (e) {
-    next(e)
-  }
-}
+  res.json(await commentService.create(data))
+})
 
-const destroy = async (req, res, next) => {
+const destroy = catchAsync(async (req, res, next) => {
   const id = req.params.commentid
   if(!(await commentService.exists(id, req.user.id))) {
     return next(new ApiError(httpStatus.NOT_FOUND, 'Comment not found'))
   }
-  try {
-    await commentService.destroy(id)
-    res.end()
-  } catch (e) {
-    next(e)
-  }
-}
+  await commentService.destroy(id)
+  res.end()
+})
 
-const fetch = async (req, res, next) => {
+const fetch = catchAsync(async (req, res, next) => {
   const id = req.params.postid
-  try {
-    res.json(await commentService.fetch(id))
-  } catch (e) {
-    next(e)
-  }
-}
+  res.json(await commentService.fetch(id))
+})
 
 module.exports = {
   create,

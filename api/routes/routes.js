@@ -21,9 +21,9 @@ Router.get('/posts', postController.fetch)
 Router.delete('/posts/:id', auth, postController.destroy)
 Router.post('/posts/:id/favorite-toggle', auth, postController.favoriteToggle)
 
-Router.get('/comment/:postid', commentController.fetch)
-Router.post('/comment/:postid', auth, ...commentValidation.create, commentController.create)
-Router.delete('/comment/:commentid', auth, commentController.destroy)
+Router.get('/comments/:postid', commentController.fetch)
+Router.post('/comments/:postid', auth, ...commentValidation.create, commentController.create)
+Router.delete('/comments/:commentid', auth, commentController.destroy)
 
 Router.get('/user/:username', userController.profile)
 

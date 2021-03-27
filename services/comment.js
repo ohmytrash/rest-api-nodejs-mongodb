@@ -15,7 +15,7 @@ const destroy = async id => {
 }
 
 const fetch = async id => {
-  return await Comment.find({ post: id }).populate('user')
+  return await Comment.find({ post: id }).populate('user').sort('-createdAt')
 }
 
 const exists = async (_id, user) => {

@@ -2,9 +2,8 @@ const httpStatus = require("http-status")
 const ApiError = require("../../helpers/ApiError")
 const catchAsync = require("../../helpers/catchAsync")
 const userService = require('../../services/user')
-const User = require("../../models/user")
 
-const register = catchAsync(async (req, res, next) => {
+const register = catchAsync(async (req, res) => {
   const { name, username, password } = req.body
   const user = await userService.createUser({ name, username, password })
   const token = await userService.createToken(user.id)

@@ -25,7 +25,7 @@ const update = async (data, id) => {
   data.slug = await generateSlug(data.title, id)
   data.category = (await categoryService.firstOrCreate(data.category)).id
   await Post.findByIdAndUpdate(id, data)
-  return read(id)
+  return read(data.slug)
 }
 
 const exists = async (_id, user) => {

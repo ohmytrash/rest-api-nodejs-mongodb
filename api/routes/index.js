@@ -9,6 +9,12 @@ Router.use(cors())
 Router.options('*', cors())
 Router.use(fileUpload())
 
+Router.use((req, res, next) => {
+  setTimeout(() => {
+    next()
+  }, 1500)
+})
+
 Router.use(require('./routes'))
 
 Router.use((req, res, next) => {

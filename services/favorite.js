@@ -20,7 +20,12 @@ const toggle = async (user, post) => {
   return await add(user, post)
 }
 
-const fetch = async user => {
+const fetch = async (user, withPost) => {
+  if(withPost) {
+    return Favorite.find({ user })
+      .populate('post')
+      .sort('-createdAt')
+  }
   return Favorite.find({ user }).sort('-createdAt')
 }
 

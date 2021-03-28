@@ -23,6 +23,7 @@
     "http-status": "^1.5.0",
     "moment": "^2.29.1",
     "mongoose": "^5.12.2",
+    "mongoose-autopopulate": "^0.12.3",
     "morgan": "^1.10.0",
     "normalize-port": "^1.0.0",
     "parse-bearer-token": "^1.0.1",

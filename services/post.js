@@ -43,8 +43,6 @@ const exists = async (_id, user) => {
 const read = async slug => {
   try {
     return await Post.findOne({slug})
-      .populate('category')
-      .populate('user', 'name username avatar')
   } catch (e) {
     return false
   }
@@ -54,15 +52,20 @@ const fetch = async (skip, limit) => {
   try {
     const [posts, total] = await Promise.all([
       await Post.find()
-        .select('title slug description createdAt')
-        .populate('category')
-        .populate('user', 'name username avatar')
         .sort('-createdAt')
         .skip(skip)
         .limit(limit),
       await Post.countDocuments()
     ])
     return { posts, total }
+  } catch (e) {
+    return false
+  }
+}
+
+const fetchUserPost = async (id) => {
+  try {
+    return await Post.find({ user: id }).sort('-createdAt')
   } catch (e) {
     return false
   }
@@ -78,5 +81,6 @@ module.exports = {
   exists,
   read,
   fetch,
-  destroy
+  destroy,
+  fetchUserPost
 }

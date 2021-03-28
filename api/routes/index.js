@@ -12,7 +12,7 @@ Router.use(fileUpload())
 Router.use((req, res, next) => {
   setTimeout(() => {
     next()
-  }, 1500)
+  }, 500)
 })
 
 Router.use(require('./routes'))

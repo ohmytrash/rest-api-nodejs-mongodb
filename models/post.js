@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const toJSON = require('./plugins/toJSON')
+const autopopulate = require('mongoose-autopopulate')
 
 const { Schema } = mongoose
 
@@ -7,11 +8,13 @@ const postSchema = new Schema(
   {
     user: {
       type: Schema.ObjectId,
-      ref: 'User'
+      ref: 'User',
+      autopopulate: true
     },
     category: {
       type: Schema.ObjectId,
-      ref: 'Category'
+      ref: 'Category',
+      autopopulate: true
     },
     title: {
       type: String,
@@ -40,6 +43,7 @@ const postSchema = new Schema(
 )
 
 postSchema.plugin(toJSON)
+postSchema.plugin(autopopulate)
 
 const Post = mongoose.model('Post', postSchema)
 

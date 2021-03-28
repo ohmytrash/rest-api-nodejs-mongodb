@@ -43,7 +43,7 @@ const read = async _id => {
   try {
     return await Post.findOne({_id})
       .populate('category')
-      .populate('user', 'name username')
+      .populate('user', 'name username avatar')
   } catch (e) {
     return false
   }
@@ -53,7 +53,7 @@ const fetch = async () => {
   try {
     return await Post.find()
       .populate('category')
-      .populate('user', 'name username')
+      .populate('user', 'name username avatar')
       .sort('-createdAt')
   } catch (e) {
     return false

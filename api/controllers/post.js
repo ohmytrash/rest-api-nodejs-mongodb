@@ -34,8 +34,8 @@ const update = catchAsync(async (req, res, next) => {
 })
 
 const read = catchAsync(async (req, res, next) => {
-  const id = req.params.id
-  const post = await postService.read(id)
+  const slug = req.params.slug
+  const post = await postService.read(slug)
   if(post) {
     return res.json(post)
   }

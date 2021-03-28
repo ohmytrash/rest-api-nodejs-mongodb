@@ -39,9 +39,9 @@ const exists = async (_id, user) => {
   }
 }
 
-const read = async _id => {
+const read = async slug => {
   try {
-    return await Post.findOne({_id})
+    return await Post.findOne({slug})
       .populate('category')
       .populate('user', 'name username avatar')
   } catch (e) {

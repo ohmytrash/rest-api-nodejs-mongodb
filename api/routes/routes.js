@@ -16,7 +16,7 @@ Router.get('/profile', auth, authController.profile)
 
 Router.post('/posts', auth, ...postValidation.create, postController.create)
 Router.put('/posts/:id', auth, ...postValidation.create, postController.update)
-Router.get('/posts/:id', postController.read)
+Router.get('/posts/:slug', postController.read)
 Router.get('/posts', postController.fetch)
 Router.delete('/posts/:id', auth, postController.destroy)
 Router.post('/posts/:id/favorite-toggle', auth, postController.favoriteToggle)

@@ -13,7 +13,7 @@ const create = catchAsync(async (req, res) => {
     category: req.body.category,
   }
   const post = await postService.create(data)
-  res.json(await postService.read(post.id))
+  res.json(post)
 })
 
 const update = catchAsync(async (req, res, next) => {

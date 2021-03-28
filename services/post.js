@@ -18,7 +18,8 @@ const generateSlug = async (title, excludeId) => {
 const create = async data => {
   data.slug = await generateSlug(data.title)
   data.category = (await categoryService.firstOrCreate(data.category)).id
-  return await Post.create(data)
+  await Post.create(data)
+  return read(data.slug)
 }
 
 const update = async (data, id) => {

@@ -49,12 +49,19 @@ const read = async _id => {
   }
 }
 
-const fetch = async () => {
+const fetch = async (skip, limit) => {
   try {
-    return await Post.find()
-      .populate('category')
-      .populate('user', 'name username avatar')
-      .sort('-createdAt')
+    const [posts, total] = await Promise.all([
+      await Post.find()
+        .select('title slug description createdAt')
+        .populate('category')
+        .populate('user', 'name username avatar')
+        .sort('-createdAt')
+        .skip(skip)
+        .limit(limit),
+      await Post.countDocuments()
+    ])
+    return { posts, total }
   } catch (e) {
     return false
   }

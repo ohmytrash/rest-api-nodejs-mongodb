@@ -43,7 +43,9 @@ const read = catchAsync(async (req, res, next) => {
 })
 
 const fetch = catchAsync(async (req, res) => {
-  const posts = await postService.fetch()
+  const skip = Number(req.query.skip) || 0
+  const limit = Number(req.query.limit) || 10
+  const posts = await postService.fetch(skip, limit)
   res.json(posts)
 })
 

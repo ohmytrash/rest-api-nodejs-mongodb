@@ -18,7 +18,7 @@ const login = catchAsync(async (req, res, next) => {
   if(user && await userService.checkPassword(user.password, password)) {
     const token = await userService.createToken(user.id)
     const favorites = await favoriteService.fetch(user.id)
-    res.json({ user, token, favorites })
+    return res.json({ user, token, favorites })
   }
   next(new ApiError(httpStatus.BAD_REQUEST, 'Password and Username combination is invalid.'))
 })

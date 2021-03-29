@@ -9,4 +9,5 @@ module.exports = server => {
 
   require('./comment')(io)
   require('./post')(io)
+  require('./online')(io)
 }

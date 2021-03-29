@@ -25,6 +25,8 @@ Router.get('/comments/:postid', commentController.fetch)
 Router.post('/comments/:postid', auth, ...commentValidation.create, commentController.create)
 Router.delete('/comments/:commentid', auth, commentController.destroy)
 
-Router.get('/user/:username', userController.profile)
+Router.get('/users/:username', userController.profile)
+Router.get('/users/:username/posts', userController.posts)
+Router.get('/users/:username/favorites', userController.favorites)
 
 module.exports = Router

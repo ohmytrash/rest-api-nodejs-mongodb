@@ -48,24 +48,27 @@ const read = async slug => {
   }
 }
 
-const fetch = async (skip, limit) => {
+const fetch = async (skip, limit, user) => {
   try {
-    const [posts, total] = await Promise.all([
-      await Post.find()
-        .sort('-createdAt')
-        .skip(skip)
-        .limit(limit),
-      await Post.countDocuments()
-    ])
+    let posts, total
+    if(user) {
+      [posts, total] = await Promise.all([
+        await Post.find({ user })
+          .sort('-createdAt')
+          .skip(skip)
+          .limit(limit),
+        await Post.countDocuments({ user })
+      ])
+    } else {
+      [posts, total] = await Promise.all([
+        await Post.find()
+          .sort('-createdAt')
+          .skip(skip)
+          .limit(limit),
+        await Post.countDocuments()
+      ])
+    }
     return { posts, total }
-  } catch (e) {
-    return false
-  }
-}
-
-const fetchUserPost = async (id) => {
-  try {
-    return await Post.find({ user: id }).sort('-createdAt')
   } catch (e) {
     return false
   }
@@ -81,6 +84,5 @@ module.exports = {
   exists,
   read,
   fetch,
-  destroy,
-  fetchUserPost
+  destroy
 }

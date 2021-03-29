@@ -22,9 +22,15 @@ const toggle = async (user, post) => {
 
 const fetch = async (user, withPost) => {
   if(withPost) {
-    return Favorite.find({ user })
-      .populate('post')
-      .sort('-createdAt')
+      const [favorites, total] = await Promise.all([
+        await Favorite.find({ user })
+          .populate('post')
+          .sort('-createdAt')
+          .skip(withPost.skip)
+          .limit(withPost.limit),
+        await Favorite.countDocuments({ user })
+      ])
+      return { favorites, total }
   }
   return Favorite.find({ user }).sort('-createdAt')
 }

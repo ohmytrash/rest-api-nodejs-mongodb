@@ -7,5 +7,6 @@ module.exports = server => {
 
   const io = socketio(server, options)
 
-  require('./comment')(io.of('/comments'))
+  require('./comment')(io)
+  require('./post')(io)
 }

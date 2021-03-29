@@ -1,6 +1,8 @@
 const slug = require('slug')
+const PubSub = require('pubsub-js')
 const Post = require('../models/post')
 const categoryService = require('./category')
+const { NEW_POST, UPDATE_POST, DELETE_POST } = require('../config/pubsub.types')
 
 const generateSlug = async (title, excludeId) => {
   title = title.toLowerCase()
@@ -19,14 +21,18 @@ const create = async data => {
   data.slug = await generateSlug(data.title)
   data.category = (await categoryService.firstOrCreate(data.category)).id
   await Post.create(data)
-  return read(data.slug)
+  const post = await read(data.slug) 
+  await PubSub.publish(NEW_POST, post.toJSON())
+  return post
 }
 
 const update = async (data, id) => {
   data.slug = await generateSlug(data.title, id)
   data.category = (await categoryService.firstOrCreate(data.category)).id
   await Post.findByIdAndUpdate(id, data)
-  return read(data.slug)
+  const post = await read(data.slug)
+  await PubSub.publish(UPDATE_POST, post.toJSON())
+  return post
 }
 
 const exists = async (_id, user) => {
@@ -75,7 +81,9 @@ const fetch = async (skip, limit, {key, value} = { key: null, value: null }) => 
 }
 
 const destroy = async id => {
-  return await Post.findByIdAndDelete(id)
+  await Post.findByIdAndDelete(id)
+  await PubSub.publish(DELETE_POST, id)
+  return true
 }
 
 module.exports = {

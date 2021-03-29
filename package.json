@@ -17,6 +17,7 @@
     "express-fileupload": "^1.2.1",
     "express-mongo-sanitize": "^2.0.0",
     "express-rate-limit": "^5.2.3",
+    "express-slow-down": "^1.4.0",
     "express-validator": "^6.10.0",
     "file-type": "^16.3.0",
     "helmet": "^4.2.0",

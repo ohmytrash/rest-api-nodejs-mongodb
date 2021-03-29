@@ -48,7 +48,7 @@ const read = async slug => {
   }
 }
 
-const fetch = async (skip, limit, {key, value}) => {
+const fetch = async (skip, limit, {key, value} = { key: null, value: null }) => {
   try {
     let posts, total
     if(key && value) {

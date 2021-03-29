@@ -4,7 +4,7 @@ const { ONLINE_USER } = require('../config/pubsub.types')
 const users = {}
 
 const imOnline = async (token, socketid) => {
-  const user = await userService.verifyToken(token)
+  const user = await userService.verifyToken(token, 'username avatar')
   if(!user) return 0
 
   if(typeof users[user.id] == 'undefined') {
@@ -43,7 +43,14 @@ const onDisconnect = async (socketid) => {
 
 module.exports = (io) => {
   const sendOnlineUsers = () => {
-    io.emit(ONLINE_USER, users)
+    const ress = {}
+    for(let uid in users) {
+      ress[uid] = {
+        username: users[uid].username,
+        avatar: users[uid].avatar,
+      }
+    }
+    io.emit(ONLINE_USER, ress)
   }
   io.on('connect', (socket) => {
     sendOnlineUsers()

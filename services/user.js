@@ -25,9 +25,14 @@ const createToken = async (uid) => {
   return token
 }
 
-const verifyToken = async (token) => {
+const verifyToken = async (token, select) => {
   try {
-    const user = await User.findOne({ token })
+    let user
+    if(select) {
+      user = await User.findOne({ token }).select(select + ' tokenExpiredAt')
+    } else {
+      user = await User.findOne({ token })
+    }
     if(moment(user.tokenExpiredAt).diff(moment())) {
       return user
     }

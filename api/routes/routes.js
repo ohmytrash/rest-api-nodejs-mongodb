@@ -7,6 +7,7 @@ const postController = require('../controllers/post')
 const commentValidation = require('../validators/comment')
 const commentController = require('../controllers/comment')
 const userController = require('../controllers/user')
+const categoryController = require('../controllers/category')
 
 Router.post('/register', ...authValidation.register, authController.register)
 Router.post('/login', ...authValidation.login, authController.login)
@@ -28,5 +29,8 @@ Router.delete('/comments/:commentid', auth, commentController.destroy)
 Router.get('/users/:username', userController.profile)
 Router.get('/users/:username/posts', userController.posts)
 Router.get('/users/:username/favorites', userController.favorites)
+
+Router.get('/categories', categoryController.fetch)
+Router.get('/categories/:slug', categoryController.posts)
 
 module.exports = Router

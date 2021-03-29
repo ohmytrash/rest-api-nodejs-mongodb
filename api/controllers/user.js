@@ -20,7 +20,7 @@ const posts = catchAsync(async (req, res, next) => {
 
   const user = await userService.getUserByUsername(username)
   if(!user) return next(new ApiError(httpStatus.NOT_FOUND))
-  const posts = await postService.fetch(skip, limit, user.id)
+  const posts = await postService.fetch(skip, limit, { key: 'user', value: user.id })
   res.json(posts)
 })
 

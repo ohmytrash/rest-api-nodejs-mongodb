@@ -10,6 +10,20 @@ const firstOrCreate = async (title) => {
   return category
 }
 
+const exists = async slug => {
+  try {
+    return await Category.findOne({ slug })
+  } catch (e) {
+    return false
+  }
+}
+
+const fetch = () => {
+  return Category.find().sort('title')
+}
+
 module.exports = {
-  firstOrCreate
+  firstOrCreate,
+  exists,
+  fetch
 }

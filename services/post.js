@@ -48,16 +48,16 @@ const read = async slug => {
   }
 }
 
-const fetch = async (skip, limit, user) => {
+const fetch = async (skip, limit, {key, value}) => {
   try {
     let posts, total
-    if(user) {
+    if(key && value) {
       [posts, total] = await Promise.all([
-        await Post.find({ user })
+        await Post.find({ [key]: value })
           .sort('-createdAt')
           .skip(skip)
           .limit(limit),
-        await Post.countDocuments({ user })
+        await Post.countDocuments({ [key]: value })
       ])
     } else {
       [posts, total] = await Promise.all([

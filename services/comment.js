@@ -1,13 +1,17 @@
+const PubSub = require('pubsub-js')
 const Comment = require("../models/comment")
+const { NEW_COMMENT, DELETE_COMMENT } = require('../config/pubsub.types')
 
 const create = async data => {
   const comment = await Comment.create(data)
-  return await Comment.findById(comment.id).populate('user')
+  await PubSub.publish(NEW_COMMENT, comment.toJSON())
+  return comment
 }
 
 const destroy = async id => {
   try {
     await Comment.findByIdAndDelete(id)
+    await PubSub.publish(DELETE_COMMENT, id)
   } catch (e) {
     return false
   }

@@ -1,0 +1,7 @@
+const NEW_COMMENT = 'NEW_COMMENT'
+const DELETE_COMMENT = 'DELETE_COMMENT'
+
+module.exports = {
+  NEW_COMMENT,
+  DELETE_COMMENT
+}

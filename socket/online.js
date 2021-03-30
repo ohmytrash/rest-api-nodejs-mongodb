@@ -3,7 +3,7 @@ const { ONLINE_USER } = require('../config/pubsub.types')
 
 const users = {}
 
-const imOnline = async (token, socketid) => {
+const imOnline = async (token, socketid, away) => {
   const user = await userService.verifyToken(token, 'username avatar')
   if(!user) return 0
 
@@ -16,15 +16,22 @@ const imOnline = async (token, socketid) => {
     users[user.id].sockets = sockets
   }
 
-  if(!users[user.id].sockets.includes(socketid)) {
-    users[user.id].sockets.push(socketid)
+  if(users[user.id].sockets.filter(item => item.id === socketid).length == 0) {
+    users[user.id].sockets.push({ id: socketid, away })
+  } else {
+    const sockets = []
+    users[user.id].sockets.forEach(item => {
+      if(item.id === socketid) item.away = away
+      sockets.push(item)
+    })
+    users[user.id].sockets = sockets
   }
 }
 
 const onDisconnect = async (socketid) => {
   let user
   for(let uid in users) {
-    users[uid].sockets.forEach(id => {
+    users[uid].sockets.forEach(({ id }) => {
       if(id === socketid) {
         user = users[uid]
       }
@@ -33,7 +40,7 @@ const onDisconnect = async (socketid) => {
   }
 
   if(user) {
-    const index = users[user.id].sockets.indexOf(socketid)
+    const index = users[user.id].sockets.map(({ id }) => id).indexOf(socketid)
     users[user.id].sockets.splice(index, 1)
     if(!users[user.id].sockets.length) {
       delete users[user.id]
@@ -48,6 +55,7 @@ module.exports = (io) => {
       ress[uid] = {
         username: users[uid].username,
         avatar: users[uid].avatar,
+        away: users[uid].sockets.map(({ away }) => away)
       }
     }
     io.emit(ONLINE_USER, ress)
@@ -55,7 +63,12 @@ module.exports = (io) => {
   io.on('connect', (socket) => {
     sendOnlineUsers()
     socket.on('IM_ONLINE', (token) => {
-      imOnline(String(token), socket.id).then(() => {
+      imOnline(String(token), socket.id, false).then(() => {
+        sendOnlineUsers()
+      })
+    })
+    socket.on('IM_AWAY', (token) => {
+      imOnline(String(token), socket.id, true).then(() => {
         sendOnlineUsers()
       })
     })

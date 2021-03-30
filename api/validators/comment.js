@@ -7,8 +7,8 @@ const create = [
     body: {
       trim: true,
       isLength: {
-        errorMessage: 'Body min 5 and max 300 characters',
-        options: { min: 5, max: 300 },
+        errorMessage: 'Body min 3 and max 300 characters',
+        options: { min: 3, max: 300 },
       }
     }
   }),

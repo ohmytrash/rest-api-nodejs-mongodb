@@ -7,21 +7,21 @@ const create = [
     title: {
       trim: true,
       isLength: {
-        errorMessage: 'Title min 6 and max 100 characters',
-        options: { min: 6, max: 100 },
+        errorMessage: 'Title min 3 and max 100 characters',
+        options: { min: 3, max: 100 },
       }
     },
     description: {
       trim: true,
       isLength: {
-        errorMessage: 'Description min 20 and max 300 characters',
-        options: { min: 20, max: 300 },
+        errorMessage: 'Description min 3 and max 300 characters',
+        options: { min: 3, max: 300 },
       }
     },
     body: {
       isLength: {
-        errorMessage: 'Body min 20 and max 2500 characters',
-        options: { min: 20, max: 2500 },
+        errorMessage: 'Body min 3 and max 2500 characters',
+        options: { min: 3, max: 2500 },
       }
     },
     category: {

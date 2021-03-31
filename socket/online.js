@@ -1,10 +1,11 @@
+const PubSub = require('pubsub-js')
 const userService = require('../services/user')
 const { ONLINE_USER } = require('../config/pubsub.types')
 
 const users = {}
 
 const imOnline = async (token, socketid, away) => {
-  const user = await userService.verifyToken(token, 'username avatar')
+  const user = await userService.verifyToken(token, 'name username avatar')
   if(!user) return 0
 
   if(typeof users[user.id] == 'undefined') {
@@ -53,12 +54,15 @@ module.exports = (io) => {
     const ress = {}
     for(let uid in users) {
       ress[uid] = {
+        id: uid,
+        name: users[uid].name,
         username: users[uid].username,
         avatar: users[uid].avatar,
         away: users[uid].sockets.map(({ away }) => away)
       }
     }
     io.emit(ONLINE_USER, ress)
+    PubSub.publish(ONLINE_USER, users)
   }
   io.on('connect', (socket) => {
     sendOnlineUsers()

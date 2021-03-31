@@ -11,4 +11,5 @@ module.exports = server => {
   require('./post')(io)
   require('./online')(io)
   require('./call')(io)
+  require('./chat')(io)
 }

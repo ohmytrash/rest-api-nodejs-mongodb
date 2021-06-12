@@ -59,19 +59,19 @@ const fetch = async (skip, limit, {key, value} = { key: null, value: null }) => 
     let posts, total
     if(key && value) {
       [posts, total] = await Promise.all([
-        await Post.find({ [key]: value })
+        Post.find({ [key]: value })
           .sort('-createdAt')
           .skip(skip)
           .limit(limit),
-        await Post.countDocuments({ [key]: value })
+        Post.countDocuments({ [key]: value })
       ])
     } else {
       [posts, total] = await Promise.all([
-        await Post.find()
+        Post.find()
           .sort('-createdAt')
           .skip(skip)
           .limit(limit),
-        await Post.countDocuments()
+        Post.countDocuments()
       ])
     }
     return { posts, total }
